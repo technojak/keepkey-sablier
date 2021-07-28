@@ -2,7 +2,15 @@ import "react-circular-progressbar/dist/styles.css";
 
 import { gql, useQuery } from "@apollo/client";
 import { DownloadIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { Box, Flex, Progress, Spinner, Text, Tooltip, useTheme } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Progress,
+    Spinner,
+    Text,
+    Tooltip,
+    useTheme,
+} from "@chakra-ui/react";
 import BigNumber from "bignumber.js";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -17,8 +25,7 @@ import { WithdrawDrawer } from "../../components/WithdrawDrawer";
 import { useWithdraw } from "../../context/WithdrawProvider";
 import { useInterval } from "../../hooks/useInterval";
 import { formatAddress } from "../../lib/string.utils";
-import { Stream } from '../../types.d'
-
+import { Stream } from "../../types.d";
 
 type StreamQuery = {
     stream: Stream;
@@ -115,6 +122,7 @@ function formatStreamData(stream?: Stream): FormattedStream | null {
 
 export function StreamClaim() {
     const [stream, setStream] = useState<FormattedStream | null>(null);
+    const theme = useTheme();
     const { onOpen } = useWithdraw();
     const params = useParams<{ id: string }>();
     const { data, loading } = useQuery<StreamQuery>(STREAM, {
@@ -122,20 +130,22 @@ export function StreamClaim() {
         skip: !params.id,
     });
 
-    const theme = useTheme();
     useInterval(() => {
         setStream(formatStreamData(data?.stream));
     }, 1000);
 
-    if (loading || !stream) return (
-        <Flex align="center" justify="center">
-            <Spinner size="xl" color="secondary.500" />
-        </Flex>
-    )
+    if (loading || !stream)
+        return (
+            <Flex align="center" justify="center">
+                <Spinner size="xl" color="secondary.500" />
+            </Flex>
+        );
 
     const tooltip = `
         This is an active stream created by ${formatAddress(stream.sender)} 
-        and paying ${formatAddress(stream.recipient)} ${stream.rate} ${stream.token.symbol} 
+        and paying ${formatAddress(stream.recipient)} ${stream.rate} ${
+        stream.token.symbol
+    } 
         per second. The recipient has not yet withdrawn all the funds.
     `;
 
@@ -278,6 +288,7 @@ export function StreamClaim() {
                         aria-label="withdraw"
                         bgGradient="linear(to-r, primary.100, secondary.300)"
                         borderRadius="lg"
+                        boxShadow="2xl"
                         color="blackAlpha.900"
                         align="center"
                         justify="center"

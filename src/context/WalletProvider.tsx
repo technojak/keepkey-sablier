@@ -34,7 +34,7 @@ const WalletContext = React.createContext<WalletContextProps>({
     onboard: null,
     provider: null,
     wallet: null,
-    address: '',
+    address: "",
     loading: true,
 });
 
@@ -45,15 +45,17 @@ export function useWallet() {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-    const [provider, setProvider] = useState<InfuraProvider|Web3Provider|null>(null);
-    const [address, setAddress] = useState<string>('');
+    const [provider, setProvider] = useState<
+        InfuraProvider | Web3Provider | null
+    >(null);
+    const [address, setAddress] = useState<string>("");
     const [network, setNetwork] = useState<number>();
     const [loading, setLoading] = useState(true);
-    const [wallet, setWallet] = useState<Wallet|null>(null);
-    const [onboard, setOnboard] = useState<OnboardAPI|null>(null);
+    const [wallet, setWallet] = useState<Wallet | null>(null);
+    const [onboard, setOnboard] = useState<OnboardAPI | null>(null);
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
         const onboard = setupOnboard({
             network: setNetwork,
             address: setAddress,

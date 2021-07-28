@@ -1,6 +1,9 @@
 import { useDisclosure } from "@chakra-ui/react";
-import { BigNumber as EthersBigNumber, BigNumberish } from "@ethersproject/bignumber";
-import BigNumber from 'bignumber.js'
+import {
+    BigNumber as EthersBigNumber,
+    BigNumberish,
+} from "@ethersproject/bignumber";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { useContext } from "react";
 
@@ -12,7 +15,7 @@ type WithdrawalProviderProps = {
     children: React.ReactNode;
 };
 
-type WithdrawalInput = {}
+type WithdrawalInput = {};
 
 type WithdrawalContextProps = {
     isOpen: boolean;
@@ -34,15 +37,15 @@ export function formatNumber(input?: BigNumberish) {
 
 export function WithdrawProvider({ children }: WithdrawalProviderProps) {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { provider, address } = useWallet()
-    
+    const { provider, address } = useWallet();
+
     const buildtx = async (id: string, claimAmount: string) => {
         const amountInBaseUnits = new BigNumber(claimAmount).times(
             new BigNumber(10).exponentiatedBy(18)
         );
         const data = sablierProxyInterface.encodeFunctionData(
             "withdrawFromSalary",
-            [id,  amountInBaseUnits.toFixed()]
+            [id, amountInBaseUnits.toFixed()]
         );
         const tx = {
             to: SABLIER_PROXY_CONTRACT,
@@ -51,30 +54,44 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
         };
         try {
             const gasPrice = await provider?.getGasPrice();
-            const gasLimit = '80000'
-            const bufferedGasLimit = new BigNumber(gasLimit).times(1.2).decimalPlaces(0).toString()
-            const bufferedGasPrice = new BigNumber(10).times(1.2).decimalPlaces(0).toString()
+            const gasLimit = "80000";
+            const bufferedGasLimit = new BigNumber(gasLimit)
+                .times(1.2)
+                .decimalPlaces(0)
+                .toString();
+            const bufferedGasPrice = new BigNumber(10)
+                .times(1.2)
+                .decimalPlaces(0)
+                .toString();
             return {
                 ...tx,
                 gasPrice: toHexString(gasPrice),
                 gasLimit: toHexString(gasLimit),
-                estimatedFee: new BigNumber(bufferedGasLimit).times(bufferedGasPrice).toFixed()
+                estimatedFee: new BigNumber(bufferedGasLimit)
+                    .times(bufferedGasPrice)
+                    .toFixed(),
             };
         } catch (error) {
             console.log("error", error);
         }
     };
 
-    const handleWithdrawal = async ({ claimAmount, id }: { claimAmount: string; id: string; }) => {
+    const handleWithdrawal = async ({
+        claimAmount,
+        id,
+    }: {
+        claimAmount: string;
+        id: string;
+    }) => {
         // Validate claimAmount
         const balance = await provider?.getBalance(address);
-        console.log("balance", );
+        console.log("balance");
         const tx = await buildtx(id, claimAmount);
         if (tx) {
             if (EthersBigNumber.from(balance).lt(tx.estimatedFee)) {
-                throw new Error('Not enough eth')
+                throw new Error("Not enough eth");
             }
-    
+
             console.log("tx", tx);
             // console.log("response", response);
             // const nonce = await provider?.getSigner().getTransactionCount()

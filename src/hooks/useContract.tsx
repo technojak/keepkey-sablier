@@ -7,15 +7,18 @@ import {
 import { ethers } from "ethers";
 import { useMemo } from "react";
 
-function getSigner(provider: Web3Provider | InfuraProvider, account: string): JsonRpcSigner {
-    return provider.getSigner(account).connectUnchecked()
+function getSigner(
+    provider: Web3Provider | InfuraProvider,
+    account: string
+): JsonRpcSigner {
+    return provider.getSigner(account).connectUnchecked();
 }
 
 function getSignerOrProvider(
     provider: Web3Provider | InfuraProvider,
     account?: string
 ): InfuraProvider | JsonRpcSigner | Web3Provider {
-    return account ? getSigner(provider, account) : provider
+    return account ? getSigner(provider, account) : provider;
 }
 
 function getContract(
@@ -24,25 +27,24 @@ function getContract(
     provider: Web3Provider | InfuraProvider | null,
     account?: string
 ): Contract {
-    return new ethers.Contract(contractAddress, abi, getSignerOrProvider(provider as Web3Provider | InfuraProvider, account));
+    return new ethers.Contract(
+        contractAddress,
+        abi,
+        getSignerOrProvider(provider as Web3Provider | InfuraProvider, account)
+    );
 }
 
 export function useContract(
     provider: Web3Provider | InfuraProvider | null,
     contractAddress: string,
     abi: ContractInterface,
-    account: string,
+    account: string
 ) {
     return useMemo(() => {
         try {
-            return getContract(contractAddress, abi, provider, account)
+            return getContract(contractAddress, abi, provider, account);
         } catch (error) {
-            return null
-        }   
-    }, [
-        provider,
-        account,
-        contractAddress,
-        abi
-    ])
+            return null;
+        }
+    }, [provider, account, contractAddress, abi]);
 }

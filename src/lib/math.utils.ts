@@ -13,7 +13,6 @@ export function decimalPlaces(amount: string, value: number) {
     return new BigNumber(amount).decimalPlaces(value).toNumber()
 }
 
-
 export function toHexString(val?: BigNumberish) {
     return EthersBigNumber.from(val).toHexString()
 }

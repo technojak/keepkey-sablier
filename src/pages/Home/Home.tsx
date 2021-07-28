@@ -43,14 +43,36 @@ function Streams() {
         return <Box>No streams available for {address}</Box>;
 
     return (
-        <Flex align="center" alignSelf="center" justify="center" h="full" w="50rem" maxW="100%">
+        <Flex
+            align="center"
+            alignSelf="center"
+            justify="center"
+            h="full"
+            w="50rem"
+            maxW="100%"
+        >
             <List spacing={2} w="full">
-                <ListItem display="flex" flexDirection={{ base: 'column', md: 'row' }} p={4} w="100%">
-                    <Box w="20%" p={1}>ID</Box>
-                    <Box w="20%" p={1}>Sender</Box>
-                    <Box w="20%" p={1}>Recipient</Box>
-                    <Box w="20%" p={1}>Deposit</Box>
-                    <Box w="20%" p={1}>Token</Box>
+                <ListItem
+                    display="flex"
+                    flexDirection={{ base: "column", md: "row" }}
+                    p={4}
+                    w="100%"
+                >
+                    <Box w="20%" p={1}>
+                        ID
+                    </Box>
+                    <Box w="20%" p={1}>
+                        Sender
+                    </Box>
+                    <Box w="20%" p={1}>
+                        Recipient
+                    </Box>
+                    <Box w="20%" p={1}>
+                        Deposit
+                    </Box>
+                    <Box w="20%" p={1}>
+                        Token
+                    </Box>
                 </ListItem>
                 {data?.streams.map((stream: StreamLookup) => {
                     return (
@@ -62,7 +84,7 @@ function Streams() {
                             borderRadius="md"
                             cursor="pointer"
                             display="flex"
-                            flexDirection={{ base: 'column', md: 'row' }} 
+                            flexDirection={{ base: "column", md: "row" }}
                             onClick={() => history.push(`/stream/${stream.id}`)}
                             p={4}
                             transition=".2s all"
@@ -82,9 +104,17 @@ function Streams() {
                                 {formatAddress(stream.recipient)}
                             </Box>
                             <Box w="20%" p={1}>
-                                {decimalPlaces(fromBaseUnits(stream.deposit, stream.token.decimals), 4)}
+                                {decimalPlaces(
+                                    fromBaseUnits(
+                                        stream.deposit,
+                                        stream.token.decimals
+                                    ),
+                                    4
+                                )}
                             </Box>
-                            <Box w="20%" p={1}>{stream.token.symbol}</Box>
+                            <Box w="20%" p={1}>
+                                {stream.token.symbol}
+                            </Box>
                         </ListItem>
                     );
                 })}
@@ -97,7 +127,14 @@ export function Home() {
     const { connect, wallet } = useWallet();
     if (!wallet) {
         return (
-            <Flex align="center" alignSelf="center" justify="center" h="full" w="50rem" maxW="100%">
+            <Flex
+                align="center"
+                alignSelf="center"
+                justify="center"
+                h="full"
+                w="50rem"
+                maxW="100%"
+            >
                 <Button
                     onClick={connect}
                     align="center"
@@ -112,18 +149,18 @@ export function Home() {
                     // backgroundPositionY="0%"
                     backgroundSize="100% 100%"
                     _active={{
-                        backgroundPositionY: '50%',
-                        backgroundSize: '100% 200%',
+                        backgroundPositionY: "50%",
+                        backgroundSize: "100% 200%",
                     }}
                     _hover={{
-                        backgroundPositionY: '50%',
-                        backgroundSize: '100% 200%',
+                        backgroundPositionY: "50%",
+                        backgroundSize: "100% 200%",
                     }}
                 >
                     Connect Wallet
                 </Button>
             </Flex>
-        )
+        );
     }
     return <Streams />;
 }

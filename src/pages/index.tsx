@@ -1,10 +1,7 @@
-import {
-  Route,
-  Switch
-} from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
-import { Home } from './Home/Home'
-import { StreamClaim } from './StreamClaim/StreamClaim'
+import { Home } from "./Home/Home";
+import { StreamClaim } from "./StreamClaim/StreamClaim";
 
 export function Pages() {
     return (
