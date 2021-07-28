@@ -7,6 +7,7 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { useContext } from "react";
 
+import { WithdrawDrawer } from "../components/WithdrawDrawer";
 import { toHexString } from "../lib/math.utils";
 import { SABLIER_PROXY_CONTRACT, sablierProxyInterface } from "../lib/sablier";
 import { useWallet } from "./WalletProvider";
@@ -15,20 +16,34 @@ type WithdrawalProviderProps = {
     children: React.ReactNode;
 };
 
-type WithdrawalInput = {};
+type WithdrawalInput = {
+    amount: string;
+    id: string;
+}
+
+type WithdrawalTx = {
+    to: string;
+    data: string;
+    value: string;
+    gasPrice: string;
+    gasLimit: string;
+    estimatedFee: string;
+}
 
 type WithdrawalContextProps = {
     isOpen: boolean;
     onClose(): void;
     onOpen(): void;
-    handleWithdrawal(input?: WithdrawalInput): void;
+    withdrawal(input?: WithdrawalInput): Promise<any>;
+    buildtx(input?: WithdrawalInput): Promise<WithdrawalTx|null>;
 };
 
 const WithdrawalContext = React.createContext<WithdrawalContextProps>({
     isOpen: false,
     onClose: () => {},
     onOpen: () => {},
-    handleWithdrawal: () => {},
+    withdrawal: () => Promise.resolve(),
+    buildtx: () => Promise.resolve(null),
 });
 
 export function formatNumber(input?: BigNumberish) {
@@ -39,10 +54,8 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { provider, address } = useWallet();
 
-    const buildtx = async (id: string, claimAmount: string) => {
-        const amountInBaseUnits = new BigNumber(claimAmount).times(
-            new BigNumber(10).exponentiatedBy(18)
-        );
+    const buildtx = async ({ amount, id }: WithdrawalInput) => {
+        const amountInBaseUnits = new BigNumber(amount).times(new BigNumber(10).exponentiatedBy(18));
         const data = sablierProxyInterface.encodeFunctionData(
             "withdrawFromSalary",
             [id, amountInBaseUnits.toFixed()]
@@ -54,57 +67,59 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
         };
         try {
             const gasPrice = await provider?.getGasPrice();
+            
+            console.log('gasPrice', gasPrice);
+
             const gasLimit = "80000";
             const bufferedGasLimit = new BigNumber(gasLimit)
                 .times(1.2)
                 .decimalPlaces(0)
                 .toString();
-            const bufferedGasPrice = new BigNumber(10)
+            const bufferedGasPrice = new BigNumber(gasPrice?.toString() || '50')
                 .times(1.2)
                 .decimalPlaces(0)
                 .toString();
             return {
                 ...tx,
-                gasPrice: toHexString(gasPrice),
-                gasLimit: toHexString(gasLimit),
+                gasPrice: toHexString(bufferedGasPrice),
+                gasLimit: toHexString(bufferedGasLimit),
                 estimatedFee: new BigNumber(bufferedGasLimit)
                     .times(bufferedGasPrice)
                     .toFixed(),
             };
         } catch (error) {
-            console.log("error", error);
+            console.error("error", error);
+            return null
         }
     };
 
-    const handleWithdrawal = async ({
-        claimAmount,
+    const withdrawal = async ({
+        amount,
         id,
-    }: {
-        claimAmount: string;
-        id: string;
-    }) => {
-        // Validate claimAmount
-        const balance = await provider?.getBalance(address);
-        console.log("balance");
-        const tx = await buildtx(id, claimAmount);
-        if (tx) {
-            if (EthersBigNumber.from(balance).lt(tx.estimatedFee)) {
-                throw new Error("Not enough eth");
+    }: WithdrawalInput) => {
+        // Validate amount
+        try {
+            const balance = await provider?.getBalance(address);
+            const tx = await buildtx({ id, amount });
+            if (tx) {
+                if (EthersBigNumber.from(balance).lt(tx.estimatedFee)) {
+                    throw new Error("Not enough eth");
+                }
+                const nonce = await provider?.getSigner().getTransactionCount()
+                const withdrawalTx = await provider?.getSigner().sendTransaction({
+                  from: address,
+                  to: tx?.to,
+                  data: tx?.data,
+                  value: tx?.value,
+                  gasLimit: tx?.gasLimit,
+                  gasPrice: tx?.gasPrice,
+                  nonce: nonce,
+                  chainId: 1
+                })
+                return withdrawalTx
             }
-
-            console.log("tx", tx);
-            // console.log("response", response);
-            // const nonce = await provider?.getSigner().getTransactionCount()
-            // const claimTx = await provider?.getSigner().sendTransaction({
-            //   from: walletAddress,
-            //   to: state.transaction?.to,
-            //   data: state.transaction?.data,
-            //   value: state.transaction?.value,
-            //   gasLimit: state.transaction?.gasLimit,
-            //   gasPrice: state.transaction?.gasPrice,
-            //   nonce: nonce,
-            //   chainId: state.transaction?.chainId
-            // })
+        } catch (error) {
+            return null
         }
     };
 
@@ -114,10 +129,12 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
                 isOpen,
                 onClose,
                 onOpen,
-                handleWithdrawal,
+                withdrawal,
+                buildtx,
             }}
         >
             {children}
+            <WithdrawDrawer />
         </WithdrawalContext.Provider>
     );
 }

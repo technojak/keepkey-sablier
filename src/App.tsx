@@ -13,16 +13,16 @@ export function App() {
     return (
         <ChakraProvider theme={theme}>
             <ApolloProvider client={client}>
-                <WalletProvider>
-                    <WithdrawProvider>
-                        <CSSReset />
-                        <Router>
+                <Router>
+                    <WalletProvider>
+                        <WithdrawProvider>
+                            <CSSReset />
                             <Layout>
                                 <Pages />
                             </Layout>
-                        </Router>
-                    </WithdrawProvider>
-                </WalletProvider>
+                        </WithdrawProvider>
+                    </WalletProvider>
+                </Router>
             </ApolloProvider>
         </ChakraProvider>
     );

@@ -2,15 +2,7 @@ import "react-circular-progressbar/dist/styles.css";
 
 import { gql, useQuery } from "@apollo/client";
 import { DownloadIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import {
-    Box,
-    Flex,
-    Progress,
-    Spinner,
-    Text,
-    Tooltip,
-    useTheme,
-} from "@chakra-ui/react";
+import { Box, Flex, Progress, Spinner, Text, Tooltip, useTheme } from "@chakra-ui/react";
 import BigNumber from "bignumber.js";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -21,11 +13,10 @@ import {
 } from "react-circular-progressbar";
 import { useParams } from "react-router-dom";
 
-import { WithdrawDrawer } from "../../components/WithdrawDrawer";
 import { useWithdraw } from "../../context/WithdrawProvider";
 import { useInterval } from "../../hooks/useInterval";
 import { formatAddress } from "../../lib/string.utils";
-import { Stream } from "../../types.d";
+import { Stream } from "../../types.d"
 
 type StreamQuery = {
     stream: Stream;
@@ -134,18 +125,15 @@ export function StreamClaim() {
         setStream(formatStreamData(data?.stream));
     }, 1000);
 
-    if (loading || !stream)
-        return (
-            <Flex align="center" justify="center">
-                <Spinner size="xl" color="secondary.500" />
-            </Flex>
-        );
+    if (loading || !stream) return (
+        <Flex align="center" justify="center">
+            <Spinner size="xl" color="secondary.500" />
+        </Flex>
+    )
 
     const tooltip = `
         This is an active stream created by ${formatAddress(stream.sender)} 
-        and paying ${formatAddress(stream.recipient)} ${stream.rate} ${
-        stream.token.symbol
-    } 
+        and paying ${formatAddress(stream.recipient)} ${stream.rate} ${stream.token.symbol} 
         per second. The recipient has not yet withdrawn all the funds.
     `;
 
@@ -302,7 +290,6 @@ export function StreamClaim() {
                     </Flex>
                 </Box>
             </Box>
-            <WithdrawDrawer id={params.id} />
         </>
     );
 }
