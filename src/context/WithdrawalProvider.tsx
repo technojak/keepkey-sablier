@@ -12,6 +12,13 @@ import { toHexString } from "../lib/math.utils";
 import { SABLIER_PROXY_CONTRACT, sablierProxyInterface } from "../lib/sablier";
 import { useWallet } from "./WalletProvider";
 
+class WithdrawalError extends Error {
+    constructor(message: string) {
+        super(message)
+        this.message = message
+    }
+}
+
 type WithdrawalProviderProps = {
     children: React.ReactNode;
 };
@@ -50,7 +57,7 @@ export function formatNumber(input?: BigNumberish) {
     return parseInt(toHexString(input), 16);
 }
 
-export function WithdrawProvider({ children }: WithdrawalProviderProps) {
+export function WithdrawalProvider({ children }: WithdrawalProviderProps) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { provider, address } = useWallet();
 
@@ -67,9 +74,6 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
         };
         try {
             const gasPrice = await provider?.getGasPrice();
-            
-            console.log('gasPrice', gasPrice);
-
             const gasLimit = "80000";
             const bufferedGasLimit = new BigNumber(gasLimit)
                 .times(1.2)
@@ -103,7 +107,7 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
             const tx = await buildtx({ id, amount });
             if (tx) {
                 if (EthersBigNumber.from(balance).lt(tx.estimatedFee)) {
-                    throw new Error("Not enough eth");
+                    throw new WithdrawalError("Insufficent funds to cover gas");
                 }
                 const nonce = await provider?.getSigner().getTransactionCount()
                 const withdrawalTx = await provider?.getSigner().sendTransaction({
@@ -119,7 +123,7 @@ export function WithdrawProvider({ children }: WithdrawalProviderProps) {
                 return withdrawalTx
             }
         } catch (error) {
-            return null
+            throw error
         }
     };
 

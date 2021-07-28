@@ -13,7 +13,7 @@ import {
 } from "react-circular-progressbar";
 import { useParams } from "react-router-dom";
 
-import { useWithdraw } from "../../context/WithdrawProvider";
+import { useWithdraw } from "../../context/WithdrawalProvider";
 import { useInterval } from "../../hooks/useInterval";
 import { formatAddress } from "../../lib/string.utils";
 import { Stream } from "../../types.d"
@@ -180,7 +180,7 @@ export function StreamClaim() {
                         >
                             <Flex
                                 align="center"
-                                bgGradient="linear(to-r, primary.100, secondary.300)"
+                                bgGradient="linear(to-r, primary.100, secondary.200)"
                                 color="blackAlpha.900"
                                 borderRadius="lg"
                                 boxShadow="2xl"
@@ -251,7 +251,7 @@ export function StreamClaim() {
                 </Box>
                 <Flex
                     align="center"
-                    bgGradient="linear(to-r, primary.100, secondary.300)"
+                    bgGradient="linear(to-r, primary.100, secondary.200)"
                     borderColor="secondary.100"
                     borderRadius="lg"
                     boxShadow="2xl"
@@ -274,7 +274,7 @@ export function StreamClaim() {
                     <Flex
                         as="button"
                         aria-label="withdraw"
-                        bgGradient="linear(to-r, primary.100, secondary.300)"
+                        bgGradient="linear(to-r, primary.100, secondary.200)"
                         borderRadius="lg"
                         boxShadow="2xl"
                         color="blackAlpha.900"

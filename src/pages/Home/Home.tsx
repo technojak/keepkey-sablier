@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { Box, Button, Flex, List, ListItem } from "@chakra-ui/react";
+import { Box, Button, Flex, List, ListItem, Spinner } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 
 import { useWallet } from "../../context/WalletProvider";
@@ -35,12 +35,20 @@ function Streams() {
         variables: {
             address,
         },
+        skip: !address
     });
 
-    if (loading) return <Box>Loading...</Box>;
+    if (loading) return (
+        <Flex align="center" justify="center">
+            <Spinner size="xl" color="secondary.500" />
+        </Flex>
+    );
 
-    if (!data?.streams?.length)
-        return <Box>No streams available for {address}</Box>;
+    if (!data?.streams?.length) return (
+        <Flex align="center" justify="center">
+            <Box>No streams available for {address}</Box>
+        </Flex>
+    );
 
     return (
         <Flex

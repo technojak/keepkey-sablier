@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 
 import { useWallet } from "../context/WalletProvider";
-import { useWithdraw } from "../context/WithdrawProvider";
+import { useWithdraw } from "../context/WithdrawalProvider";
 
 type WithdrawalButtonProps = {
     onWithdrawal(): void; 

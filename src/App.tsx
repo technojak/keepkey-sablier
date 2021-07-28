@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import { Layout } from "./components/Layout";
 import { WalletProvider } from "./context/WalletProvider";
-import { WithdrawProvider } from "./context/WithdrawProvider";
+import { WithdrawalProvider } from "./context/WithdrawalProvider";
 import { client } from "./lib/apollo";
 import { Pages } from "./pages";
 import { theme } from "./theme";
@@ -17,12 +17,12 @@ export function App() {
             <ApolloProvider client={client}>
                 <Router>
                     <WalletProvider>
-                        <WithdrawProvider>
+                        <WithdrawalProvider>
                             <CSSReset />
                             <Layout>
                                 <Pages />
                             </Layout>
-                        </WithdrawProvider>
+                        </WithdrawalProvider>
                     </WalletProvider>
                 </Router>
             </ApolloProvider>
