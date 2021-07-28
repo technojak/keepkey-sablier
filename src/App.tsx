@@ -1,3 +1,5 @@
+import './theme/index.css'
+
 import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider, CSSReset } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";

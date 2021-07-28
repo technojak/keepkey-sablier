@@ -1,0 +1,5 @@
+/* Global Overrides */
+
+.bn-onboard-modal {
+    z-index: 1500 /* Higher than the drawer z-index */
+}
