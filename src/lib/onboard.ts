@@ -2,7 +2,7 @@ import Onboard from 'bnc-onboard';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 
 const wallets = [{
-    walletName: 'keepkey', preferred: true, rpcUrl: 'https://mainnet.infura.io/v3/254bf6f2a8164c57b4c07a310e49be66'
+    walletName: 'keepkey', preferred: true, rpcUrl: process.env.REACT_APP_RPC_URL
 }]
 
 const walletCheck = [
