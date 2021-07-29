@@ -1,16 +1,16 @@
 import { Route, Switch } from "react-router-dom";
 
-import { Home } from "./Home/Home";
-import { StreamClaim } from "./StreamClaim/StreamClaim";
+import { HomePage } from "./Home/Home";
+import { StreamPage } from "./Stream/Stream";
 
 export function Pages() {
     return (
         <Switch>
             <Route path="/stream/:id">
-                <StreamClaim />
+                <StreamPage />
             </Route>
             <Route exact path="/">
-                <Home />
+                <HomePage />
             </Route>
         </Switch>
     );

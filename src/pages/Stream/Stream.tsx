@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 import { useWithdraw } from "../../context/WithdrawalProvider";
 import { useInterval } from "../../hooks/useInterval";
 import { formatAddress } from "../../lib/string.utils";
-import { Stream } from "../../types.d"
+import { Stream } from "../../types"
 
 type StreamQuery = {
     stream: Stream;
@@ -111,7 +111,7 @@ function formatStreamData(stream?: Stream): FormattedStream | null {
     };
 }
 
-export function StreamClaim() {
+export function StreamPage() {
     const [stream, setStream] = useState<FormattedStream | null>(null);
     const theme = useTheme();
     const { onOpen } = useWithdraw();
@@ -272,21 +272,39 @@ export function StreamClaim() {
                 </Flex>
                 <Box w="32rem" maxW="100%" margin="0 auto" mb={16}>
                     <Flex
-                        as="button"
                         aria-label="withdraw"
-                        bgGradient="linear(to-r, primary.100, secondary.200)"
+                        as="button"
+                        backgroundSize="100% 100%"
+                        bgGradient="linear(to-tr, secondary.100, primary.100)"
                         borderRadius="lg"
                         boxShadow="2xl"
-                        color="blackAlpha.900"
-                        align="center"
-                        justify="center"
-                        px={16}
-                        py={3}
                         onClick={onOpen}
+                        p={2}
+                        transition="background-size 200ms ease 0s, background-position 200ms ease 0s"
                         w="full"
+                        _active={{
+                            backgroundPositionY: "50%",
+                            backgroundSize: "100% 200%",
+                        }}
+                        _hover={{
+                            backgroundPositionY: "50%",
+                            backgroundSize: "100% 200%",
+                        }}
                     >
-                        <DownloadIcon boxSize={4} mr={2} />
-                        <Text>Withdraw</Text>
+                        <Flex
+                            align="center"
+                            backgroundColor="bg.main"
+                            borderRadius="lg"
+                            color="blackAlpha.900"
+                            justify="center"
+                            px={16}
+                            py={3}
+                            transition="all 200ms ease 0s"
+                            w="full"
+                        >
+                            <DownloadIcon boxSize={4} mr={2} />
+                            <Text>Withdraw</Text>
+                        </Flex>
                     </Flex>
                 </Box>
             </Box>

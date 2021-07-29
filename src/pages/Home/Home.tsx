@@ -131,7 +131,7 @@ function Streams() {
     );
 }
 
-export function Home() {
+export function HomePage() {
     const { connect, wallet } = useWallet();
     if (!wallet) {
         return (
@@ -144,18 +144,17 @@ export function Home() {
                 maxW="100%"
             >
                 <Button
-                    onClick={connect}
                     align="center"
+                    backgroundSize="100% 100%"
                     bgGradient="linear(to-tr, secondary.500, primary.200)"
                     borderRadius="lg"
                     boxShadow="2xl"
                     color="blackAlpha.900"
                     justify="center"
-                    p={16}
                     maxW="100%"
+                    onClick={connect}
+                    p={16}
                     transition="background-size 200ms ease 0s, background-position 200ms ease 0s"
-                    // backgroundPositionY="0%"
-                    backgroundSize="100% 100%"
                     _active={{
                         backgroundPositionY: "50%",
                         backgroundSize: "100% 200%",
