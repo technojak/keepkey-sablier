@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 
-import { Footer } from "./Footer";
 import { Header } from "./Header";
 
 type LayoutProps = {
@@ -14,7 +13,6 @@ export function Layout({ children }: LayoutProps) {
             <Flex as="main" flex={1}>
                 {children}
             </Flex>
-            <Footer />
         </Flex>
     );
 }
