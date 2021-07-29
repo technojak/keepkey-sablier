@@ -2,7 +2,6 @@ import { Box, Button, Container, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
 import { useWallet } from "../context/WalletProvider";
-import { SablierLogo } from "./SablierLogo";
 
 export function Header() {
     const { disconnect, wallet } = useWallet();
@@ -11,7 +10,7 @@ export function Header() {
         <React.Fragment>
             <Box py={4} bg="primary.100" w="full" boxShadow="xl" mb={4}>
                 <Container maxW="container.xl">
-                    <Text fontSize="lg" textAlign="center">This dapp was created to allow KeepKey wallets to claim from <SablierLogo /> streams. This dapp is not built or maintained by Sablier. <br/><strong>No warranty or support of any kind is provided</strong>.</Text>
+                    <Text fontSize="lg" textAlign="center">This dapp was created to allow KeepKey wallets to claim from Sablier streams. This dapp is not built or maintained by Sablier. <br/><strong>No warranty or support of any kind is provided</strong>.</Text>
                 </Container>
             </Box>
             <Container maxW="container.xl">
