@@ -146,7 +146,7 @@ export function HomePage() {
                 <Button
                     align="center"
                     backgroundSize="100% 100%"
-                    bgGradient="linear(to-tr, secondary.500, primary.200)"
+                    bgGradient="linear(to-tr, secondary.200, primary.100)"
                     borderRadius="lg"
                     boxShadow="2xl"
                     color="blackAlpha.900"
