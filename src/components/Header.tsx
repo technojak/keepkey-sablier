@@ -8,7 +8,7 @@ export function Header() {
 
     return (
         <React.Fragment>
-            <Box py={4} bg="primary.100" w="full" boxShadow="xl" mb={4}>
+            <Box py={4} bg="primary.100" w="full" boxShadow="xl" mb={8}>
                 <Container maxW="container.xl">
                     <Text fontSize="lg" textAlign="center">This dapp was created to allow KeepKey wallets to claim from Sablier streams. This dapp is not built or maintained by Sablier. <br/><strong>No warranty or support of any kind is provided</strong>.</Text>
                 </Container>

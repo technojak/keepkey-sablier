@@ -2,7 +2,19 @@ import "react-circular-progressbar/dist/styles.css";
 
 import { gql, useQuery } from "@apollo/client";
 import { DownloadIcon, InfoOutlineIcon } from "@chakra-ui/icons";
-import { Box, Flex, Progress, Spinner, Text, Tooltip, useTheme } from "@chakra-ui/react";
+import {
+    Box,
+    Divider,
+    Flex,
+    Link,
+    List,
+    ListItem,
+    Progress,
+    Spinner,
+    Text,
+    Tooltip,
+    useTheme,
+} from "@chakra-ui/react";
 import BigNumber from "bignumber.js";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -15,8 +27,8 @@ import { useParams } from "react-router-dom";
 
 import { useWithdraw } from "../../context/WithdrawalProvider";
 import { useInterval } from "../../hooks/useInterval";
-import { formatAddress } from "../../lib/string.utils";
-import { Stream } from "../../types"
+import { formatAddress, makeEtherscanLink } from "../../lib/string.utils";
+import { Stream } from "../../types";
 
 type StreamQuery = {
     stream: Stream;
@@ -125,11 +137,15 @@ export function StreamPage() {
         setStream(formatStreamData(data?.stream));
     }, 1000);
 
-    if (loading || !stream) return (
-        <Flex align="center" justify="center">
-            <Spinner size="xl" color="secondary.500" />
-        </Flex>
-    )
+    console.log('stream', stream);
+
+    if (loading || !stream) {
+        return (
+            <Flex align="center" justify="center">
+                <Spinner size="xl" color="secondary.500" />
+            </Flex>
+        );
+    }
 
     const tooltip = `
         This is an active stream created by ${formatAddress(stream.sender)} 
@@ -282,10 +298,6 @@ export function StreamPage() {
                         p={2}
                         transition="background-size 200ms ease 0s, background-position 200ms ease 0s"
                         w="full"
-                        _active={{
-                            backgroundPositionY: "50%",
-                            backgroundSize: "100% 200%",
-                        }}
                         _hover={{
                             backgroundPositionY: "50%",
                             backgroundSize: "100% 200%",
@@ -299,13 +311,55 @@ export function StreamPage() {
                             justify="center"
                             px={16}
                             py={3}
-                            transition="all 200ms ease 0s"
+                            transition="background 200ms ease 0s"
                             w="full"
+                            _hover={{
+                                bgGradient: "linear(to-tr, secondary.100, primary.100)",
+                                boxShadow: "2xl"
+                            }}
                         >
                             <DownloadIcon boxSize={4} mr={2} />
                             <Text>Withdraw</Text>
                         </Flex>
                     </Flex>
+                </Box>
+                <Box w="32rem" maxW="100%" margin="0 auto" mb={16}>
+                    <Divider borderColor="secondary.200" mb={8} />
+                    <Text fontSize="xl">History</Text>
+                    <List spacing={2} w="full">
+                        <ListItem
+                            display="flex"
+                            flexDirection={{ base: "column", md: "row" }}
+                            p={4}
+                            w="100%"
+                        >
+                            <Box textAlign="center" w="50%" p={1}>Amount</Box>
+                            <Box textAlign="center" w="50%" p={1}>TX</Box>
+                        </ListItem>
+                        {stream.withdrawals.map(withdrawal => {
+                            return (
+                                <ListItem
+                                    key={withdrawal.txhash}
+                                    boxShadow="lg"
+                                    border="1px solid"
+                                    borderColor="secondary.100"
+                                    borderRadius="md"
+                                    display="flex"
+                                    flexDirection={{ base: "column", md: "row" }}
+                                    p={4}
+                                    transition=".2s all"
+                                    w="100%"
+                                >
+                                    <Box textAlign="center" w="50%" p={1}>{new BigNumber(withdrawal.amount).div('1e+18').toString()}</Box>
+                                    <Box textAlign="center" w="50%" p={1}>
+                                        <Link isExternal href={makeEtherscanLink(withdrawal.txhash, 'transaction')}>
+                                            View on explorer
+                                        </Link>
+                                    </Box>
+                                </ListItem>
+                            )
+                        })}
+                    </List>
                 </Box>
             </Box>
         </>
