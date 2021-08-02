@@ -66,7 +66,7 @@ const STREAM = gql`
     }
 `;
 
-function calculateAmountAvailable(stream: Stream) {
+function calculateAmountStreamed(stream: Stream) {
     const rate = new BigNumber(stream.ratePerSecond).div("1e+18");
     const now = Date.now() / 1000;
     const startTime = stream.startTime;
@@ -74,12 +74,27 @@ function calculateAmountAvailable(stream: Stream) {
     if (new BigNumber(now).gte(stopTime)) {
         return new BigNumber(stream.deposit).div("1e+18").toString();
     }
-    const available = rate.times(new BigNumber(now).minus(startTime));
-    return available.toString();
+    const streamed = rate.times(new BigNumber(now).minus(startTime));
+    return streamed.toString();
+}
+
+function calculateAvailable(stream: Stream) {
+    const withdrawn = stream?.withdrawals.reduce((acc, current) => {
+        const amount = new BigNumber(current.amount).div("1e+18").toNumber();
+        acc += amount;
+        return acc;
+    }, 0);
+    const amountStreamed = calculateAmountStreamed(stream)
+    return {
+        available: new BigNumber(amountStreamed).minus(withdrawn).toString(),
+        amountStreamed,
+        withdrawn
+    }
 }
 
 type FormattedStream = Stream & {
     available: string;
+    amountStreamed: string;
     remainingBalance: string;
     percentStreamed: number;
     percentWithdrawn: number;
@@ -90,14 +105,9 @@ type FormattedStream = Stream & {
 function formatStreamData(stream?: Stream): FormattedStream | null {
     if (!stream) return null;
     const deposit = new BigNumber(stream.deposit).div("1e+18").toString();
-    const available = calculateAmountAvailable(stream);
-    const withdrawn = stream?.withdrawals.reduce((acc, current) => {
-        const amount = new BigNumber(current.amount).div("1e+18").toNumber();
-        acc += amount;
-        return acc;
-    }, 0);
+    const { available, amountStreamed, withdrawn } = calculateAvailable(stream)
     const remainingBalance = new BigNumber(deposit).minus(withdrawn).toString();
-    const percentStreamed = new BigNumber(available)
+    const percentStreamed = new BigNumber(amountStreamed)
         .div(deposit)
         .times(100)
         .toNumber();
@@ -108,6 +118,7 @@ function formatStreamData(stream?: Stream): FormattedStream | null {
         .toNumber();
     return {
         ...stream,
+        amountStreamed,
         available,
         deposit,
         remainingBalance,
@@ -127,7 +138,7 @@ export function StreamPage() {
     const [stream, setStream] = useState<FormattedStream | null>(null);
     const theme = useTheme();
     const { onOpen } = useWithdraw();
-    const params = useParams<{ id: string }>();
+    const params = useParams<{id: string}>();
     const { data, loading } = useQuery<StreamQuery>(STREAM, {
         variables: { id: params.id },
         skip: !params.id,
@@ -135,9 +146,7 @@ export function StreamPage() {
 
     useInterval(() => {
         setStream(formatStreamData(data?.stream));
-    }, 1000);
-
-    console.log('stream', stream);
+    }, 30000);
 
     if (loading || !stream) {
         return (
@@ -175,10 +184,8 @@ export function StreamPage() {
                                             }
                                             strokeWidth={STROKE_WIDTH}
                                             styles={buildStyles({
-                                                pathColor:
-                                                    theme.colors.secondary[500],
-                                                trailColor:
-                                                    theme.colors.gray[50],
+                                                pathColor: theme.colors.secondary[500],
+                                                trailColor: theme.colors.gray[50],
                                             })}
                                         />
                                     </Box>
@@ -212,7 +219,7 @@ export function StreamPage() {
                                     fontSize="3xl"
                                     fontWeight="bold"
                                 >
-                                    {Number(stream?.available)?.toFixed(10)}
+                                    {Number(stream?.amountStreamed)?.toFixed(10)}
                                 </Text>
                             </Flex>
                             <Text
@@ -295,7 +302,7 @@ export function StreamPage() {
                         borderRadius="lg"
                         boxShadow="2xl"
                         onClick={onOpen}
-                        p={2}
+                        p={1}
                         transition="background-size 200ms ease 0s, background-position 200ms ease 0s"
                         w="full"
                         _hover={{
@@ -341,9 +348,9 @@ export function StreamPage() {
                                 <ListItem
                                     key={withdrawal.txhash}
                                     boxShadow="lg"
-                                    border="1px solid"
+                                    border="2px solid"
                                     borderColor="secondary.100"
-                                    borderRadius="md"
+                                    borderRadius="lg"
                                     display="flex"
                                     flexDirection={{ base: "column", md: "row" }}
                                     p={4}
