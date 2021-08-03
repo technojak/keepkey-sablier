@@ -10,7 +10,7 @@ type StreamState = {
 
 type StreamActions = 
     | { type: "SET_STREAM_ID"; payload: string }
-    | { type: "SET_STREAM"; payload: FormattedStream };
+    | { type: "SET_STREAM"; payload: FormattedStream|null };
 
 type StreamContextProps = StreamState & {
     setStreamId(id: string): void;

@@ -53,6 +53,7 @@ export function formatStream(stream?: Stream): FormattedStream | null {
         .div(deposit)
         .times(100)
         .toNumber();
+
     return {
         ...stream,
         amountStreamed,
