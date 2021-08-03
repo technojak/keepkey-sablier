@@ -6,6 +6,10 @@ type StreamQuery = {
     stream: Stream;
 };
 
+type UseStreamProps = {
+    id: string|null;
+}
+
 const STREAM = gql`
     query stream($id: String!) {
         stream(id: $id) {
@@ -36,7 +40,7 @@ const STREAM = gql`
     }
 `;
 
-export function useStream({ id }) {
+export function useStream({ id }: UseStreamProps) {
     const { data, error, loading } = useQuery<StreamQuery>(STREAM, {
         variables: { id: id },
         skip: !id,
