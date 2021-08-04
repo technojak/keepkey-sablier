@@ -146,7 +146,7 @@ export function StreamPage() {
 
     useInterval(() => {
         setStream(formatStreamData(data?.stream));
-    }, 30000);
+    }, 1000);
 
     if (loading || !stream) {
         return (
